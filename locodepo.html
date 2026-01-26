@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>Qarshi Lokomotiv Deposi</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#111;
+  color:white;
+}
+nav{
+  background:#000;
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+}
+nav ul{
+  list-style:none;
+  display:flex;
+  gap:25px;
+}
+nav li{cursor:pointer}
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:60px;
+  background:linear-gradient(90deg,#111,#333);
+}
+.slider{
+  width:520px;
+  height:260px;
+  overflow:hidden;
+  border-radius:15px;
+}
+.slides{
+  display:flex;
+  width:300%;
+  animation:slide 9s infinite;
+}
+.slide{
+  width:520px;
+  height:260px;
+}
+@keyframes slide{
+  0%{margin-left:0}
+  33%{margin-left:-520px}
+  66%{margin-left:-1040px}
+}
+
+/* LOGIN */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+}
+.modal-content{
+  background:#fff;
+  color:#000;
+  width:300px;
+  margin:150px auto;
+  padding:20px;
+  border-radius:10px;
+}
+.modal-content input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+.modal-content button{
+  width:100%;
+  padding:10px;
+}
+
+/* ADMIN */
+#admin{display:none;padding:40px}
+.box{
+  background:#222;
+  padding:20px;
+  margin-bottom:10px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <b>Qarshi Lokomotiv Deposi</b>
+  <ul>
+    <li>Bosh sahifa</li>
+    <li>Xizmatlar</li>
+    <li onclick="openLogin()">Kirish</li>
+  </ul>
+</nav>
+
+<section class="hero" id="site">
+  <div>
+    <h1>Qarshi Lokomotiv Deposi</h1>
+    <p>Zamonaviy elektrovozlar va raqamli boshqaruv</p>
+  </div>
+
+  <!-- SLIDER WITH SVG IMAGES -->
+  <div class="slider">
+    <div class="slides">
+
+      <!-- SLIDE 1 -->
+      <svg class="slide" viewBox="0 0 520 260">
+        <rect width="520" height="260" fill="#222"/>
+        <rect x="80" y="120" width="360" height="60" rx="10" fill="#777"/>
+        <circle cx="150" cy="190" r="18" fill="#000"/>
+        <circle cx="350" cy="190" r="18" fill="#000"/>
+        <text x="260" y="80" fill="#ffa726" font-size="28" text-anchor="middle">ELEKTROVOZ</text>
+      </svg>
+
+      <!-- SLIDE 2 -->
+      <svg class="slide" viewBox="0 0 520 260">
+        <rect width="520" height="260" fill="#1b1b1b"/>
+        <rect x="60" y="110" width="400" height="70" rx="12" fill="#999"/>
+        <circle cx="160" cy="195" r="20"/>
+        <circle cx="360" cy="195" r="20"/>
+        <text x="260" y="80" fill="#4fc3f7" font-size="26" text-anchor="middle">LOKOMOTIV DEPO</text>
+      </svg>
+
+      <!-- SLIDE 3 -->
+      <svg class="slide" viewBox="0 0 520 260">
+        <rect width="520" height="260" fill="#000"/>
+        <rect x="100" y="130" width="320" height="50" rx="8" fill="#555"/>
+        <circle cx="170" cy="190" r="16"/>
+        <circle cx="350" cy="190" r="16"/>
+        <text x="260" y="90" fill="#81c784" font-size="24" text-anchor="middle">ZAMONAVIY POYEZD</text>
+      </svg>
+
+    </div>
+  </div>
+</section>
+
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <h3>Admin kirish</h3>
+    <input id="loginInput" placeholder="Login">
+    <input id="passInput" type="password" placeholder="Parol">
+    <button onclick="login()">Kirish</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin">
+  <h2>Admin Panel</h2>
+  <div class="box">🚆 Lokomotivlar</div>
+  <div class="box">👷 Xodimlar</div>
+  <div class="box">📊 Hisobotlar</div>
+  <button onclick="logout()">Chiqish</button>
+</div>
+
+<script>
+function openLogin(){
+  document.getElementById("loginModal").style.display="block";
+}
+function login(){
+  if(
+    document.getElementById("loginInput").value==="admin" &&
+    document.getElementById("passInput").value==="12345"
+  ){
+    localStorage.setItem("auth","1");
+    location.reload();
+  }else alert("Login yoki parol xato");
+}
+function logout(){
+  localStorage.clear();
+  location.reload();
+}
+if(localStorage.getItem("auth")){
+  document.getElementById("site").style.display="none";
+  document.getElementById("admin").style.display="block";
+}
+</script>
+
+</body>
+</html>
