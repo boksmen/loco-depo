@@ -1,185 +1,1724 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<title>Qarshi Lokomotiv Deposi</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#111;
-  color:white;
-}
-nav{
-  background:#000;
-  padding:15px 40px;
-  display:flex;
-  justify-content:space-between;
-}
-nav ul{
-  list-style:none;
-  display:flex;
-  gap:25px;
-}
-nav li{cursor:pointer}
-.hero{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:60px;
-  background:linear-gradient(90deg,#111,#333);
-}
-.slider{
-  width:520px;
-  height:260px;
-  overflow:hidden;
-  border-radius:15px;
-}
-.slides{
-  display:flex;
-  width:300%;
-  animation:slide 9s infinite;
-}
-.slide{
-  width:520px;
-  height:260px;
-}
-@keyframes slide{
-  0%{margin-left:0}
-  33%{margin-left:-520px}
-  66%{margin-left:-1040px}
-}
-
-/* LOGIN */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-}
-.modal-content{
-  background:#fff;
-  color:#000;
-  width:300px;
-  margin:150px auto;
-  padding:20px;
-  border-radius:10px;
-}
-.modal-content input{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-}
-.modal-content button{
-  width:100%;
-  padding:10px;
-}
-
-/* ADMIN */
-#admin{display:none;padding:40px}
-.box{
-  background:#222;
-  padding:20px;
-  margin-bottom:10px;
-  border-radius:8px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Loko Depo — Admin Panel</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a30;
+      --panel2:#0c162a;
+      --card:#0f1e3a;
+      --stroke:rgba(255,255,255,.08);
+      --muted:rgba(255,255,255,.65);
+      --text:#e9f0ff;
+      --accent:#58a6ff;
+      --accent2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 800px at 15% 10%, rgba(88,166,255,.18), transparent 60%),
+                  radial-gradient(900px 700px at 90% 15%, rgba(34,197,94,.12), transparent 55%),
+                  linear-gradient(180deg, #070b14 0%, var(--bg) 45%, #070b14 100%);
+      color:var(--text);
+      overflow:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    button, input, select, textarea{font:inherit}
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-columns: 300px 1fr;
+    }
+    /* Sidebar */
+    .sidebar{
+      padding:18px 14px;
+      background: linear-gradient(180deg, rgba(15,26,48,.95), rgba(12,22,42,.95));
+      border-right:1px solid var(--stroke);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:14px 14px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      background: radial-gradient(circle at 30% 30%, rgba(88,166,255,.9), rgba(88,166,255,.15) 55%, transparent 75%),
+                  linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+    }
+    .brand h1{font-size:14px; margin:0; letter-spacing:.5px}
+    .brand p{margin:2px 0 0; font-size:12px; color:var(--muted)}
+    .side-actions{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .pill{
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      transition:.2s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .menu{
+      margin-top:14px;
+      padding:12px 8px;
+      border-radius:var(--radius);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      height: calc(100% - 170px);
+      overflow:auto;
+    }
+    .menu .group-title{
+      font-size:11px;
+      color:rgba(233,240,255,.55);
+      letter-spacing:.16em;
+      margin:12px 10px 8px;
+      text-transform:uppercase;
+    }
+    .nav-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 12px;
+      margin:6px 6px;
+      border-radius:16px;
+      cursor:pointer;
+      border:1px solid transparent;
+      transition:.18s;
+      color:rgba(233,240,255,.9);
+    }
+    .nav-item:hover{
+      background: rgba(88,166,255,.10);
+      border-color: rgba(88,166,255,.18);
+    }
+    .nav-item.active{
+      background: linear-gradient(90deg, rgba(88,166,255,.22), rgba(88,166,255,.06));
+      border-color: rgba(88,166,255,.30);
+      box-shadow: 0 8px 20px rgba(88,166,255,.12);
+    }
+    .ico{
+      width:30px;height:30px;border-radius:12px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      flex:0 0 auto;
+    }
+    .nav-text{display:flex; flex-direction:column}
+    .nav-text b{font-size:13px; font-weight:650}
+    .nav-text span{font-size:11px; color:var(--muted); margin-top:2px}
+    .sidebar-footer{
+      position:absolute;
+      bottom:14px; left:14px; right:14px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: rgba(255,255,255,.03);
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .userbox{display:flex; align-items:center; gap:10px; min-width:0}
+    .avatar{
+      width:36px;height:36px;border-radius:14px;
+      display:grid;place-items:center;
+      background: radial-gradient(circle at 30% 30%, rgba(34,197,94,.9), rgba(34,197,94,.15) 60%, transparent 80%);
+      border:1px solid var(--stroke);
+      flex:0 0 auto;
+    }
+    .userbox .meta{min-width:0}
+    .userbox .meta b{display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .userbox .meta small{color:var(--muted)}
+    .logout{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+    }
+    .logout:hover{background: rgba(255,255,255,.06)}
+    /* Main */
+    .main{
+      height:100%;
+      overflow:auto;
+      padding:18px 18px 32px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:14px;
+      z-index:10;
+      backdrop-filter: blur(10px);
+    }
+    .search{
+      flex:1;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      background: rgba(255,255,255,.03);
+      min-width:220px;
+    }
+    .search input{
+      border:none; outline:none; background:transparent;
+      color:var(--text);
+      width:100%;
+    }
+    .actions{display:flex; align-items:center; gap:10px}
+    .btn{
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      transition:.2s;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(88,166,255,.35), rgba(88,166,255,.12));
+      border-color: rgba(88,166,255,.35);
+    }
+    .btn.success{
+      background: linear-gradient(90deg, rgba(34,197,94,.30), rgba(34,197,94,.10));
+      border-color: rgba(34,197,94,.35);
+    }
+    .btn.danger{
+      background: linear-gradient(90deg, rgba(239,68,68,.30), rgba(239,68,68,.10));
+      border-color: rgba(239,68,68,.35);
+    }
+    .content{
+      margin-top:16px;
+      display:grid;
+      gap:16px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:16px;
+    }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(0,0,0,.10);
+    }
+    .card .hd h3{margin:0; font-size:14px}
+    .card .hd p{margin:4px 0 0; font-size:12px; color:var(--muted)}
+    .card .bd{padding:14px 16px}
+    .kpi{
+      grid-column: span 3;
+      min-height: 110px;
+    }
+    .kpi .value{font-size:24px; font-weight:750; letter-spacing:.2px}
+    .kpi .sub{color:var(--muted); font-size:12px; margin-top:6px}
+    .badge{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:rgba(233,240,255,.85);
+      white-space:nowrap;
+    }
+    .badge.ok{border-color: rgba(34,197,94,.45); background: rgba(34,197,94,.10)}
+    .badge.warn{border-color: rgba(245,158,11,.45); background: rgba(245,158,11,.10)}
+    .badge.bad{border-color: rgba(239,68,68,.45); background: rgba(239,68,68,.10)}
+    /* Table */
+    .table-wrap{overflow:auto}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 820px;
+    }
+    th, td{
+      text-align:left;
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:13px;
+    }
+    th{
+      font-size:11px;
+      color:rgba(233,240,255,.6);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      background: rgba(0,0,0,.10);
+      position:sticky; top:0;
+      z-index:1;
+    }
+    tr:hover td{background: rgba(88,166,255,.06)}
+    .row-actions{display:flex; gap:8px}
+    .icon-btn{
+      width:34px;height:34px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      display:grid; place-items:center;
+      transition:.18s;
+    }
+    .icon-btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    /* Forms */
+    .form{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+    }
+    .field{grid-column: span 6}
+    .field.full{grid-column: span 12}
+    label{display:block; font-size:11px; color:rgba(233,240,255,.62); margin-bottom:6px; letter-spacing:.08em; text-transform:uppercase}
+    input[type="text"], input[type="number"], input[type="date"], select, textarea{
+      width:100%;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .hint{font-size:12px; color:var(--muted); margin-top:6px}
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .filters{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    }
+    .mini{
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      min-width: 180px;
+    }
+    .notice{
+      padding:12px 14px;
+      border-radius:var(--radius);
+      border:1px dashed rgba(88,166,255,.35);
+      background: rgba(88,166,255,.08);
+      color:rgba(233,240,255,.9);
+      font-size:13px;
+    }
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(860px, 100%);
+      border-radius:22px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(15,26,48,.98), rgba(12,22,42,.98));
+      box-shadow: 0 20px 70px rgba(0,0,0,.6);
+      overflow:hidden;
+    }
+    .modal .mhd{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(0,0,0,.10);
+    }
+    .modal .mhd b{font-size:14px}
+    .modal .mbd{padding:14px 16px}
+    .x{
+      width:36px;height:36px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      display:grid; place-items:center;
+    }
+    .x:hover{background: rgba(255,255,255,.06)}
+    /* Login overlay */
+    .login-screen{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:80;
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(88,166,255,.18), transparent 60%),
+                  radial-gradient(900px 700px at 80% 20%, rgba(34,197,94,.14), transparent 55%),
+                  rgba(0,0,0,.65);
+      backdrop-filter: blur(6px);
+    }
+    .login-card{
+      width: min(460px, 100%);
+      border-radius: 24px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(15,26,48,.98), rgba(12,22,42,.98));
+      box-shadow: 0 22px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+    }
+    .login-card .top{
+      padding:18px 18px 10px;
+      border-bottom:1px solid var(--stroke);
+      background: rgba(0,0,0,.10);
+    }
+    .login-card .top h2{margin:0; font-size:16px}
+    .login-card .top p{margin:6px 0 0; color:var(--muted); font-size:12px}
+    .login-card .body{padding:16px 18px 18px}
+    .err{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+      color:rgba(255,235,235,.95);
+      display:none;
+      font-size:13px;
+    }
+    /* Responsive */
+    @media (max-width: 1100px){
+      .kpi{grid-column: span 6}
+      .app{grid-template-columns: 88px 1fr}
+      .brand .txt, .nav-text, .sidebar-footer .meta{display:none}
+      .sidebar-footer{justify-content:center}
+      .menu{padding:12px 6px}
+      .nav-item{justify-content:center}
+      .side-actions{grid-template-columns: 1fr}
+    }
+    @media (max-width: 720px){
+      .kpi{grid-column: span 12}
+      .topbar{flex-wrap:wrap}
+      .search{order:3; width:100%}
+      table{min-width: 720px}
+    }
+  </style>
 </head>
-
 <body>
+<div class="app" id="app">
 
-<nav>
-  <b>Qarshi Lokomotiv Deposi</b>
-  <ul>
-    <li>Bosh sahifa</li>
-    <li>Xizmatlar</li>
-    <li onclick="openLogin()">Kirish</li>
-  </ul>
-</nav>
-
-<section class="hero" id="site">
-  <div>
-    <h1>Qarshi Lokomotiv Deposi</h1>
-    <p>Zamonaviy elektrovozlar va raqamli boshqaruv</p>
-  </div>
-
-  <!-- SLIDER WITH SVG IMAGES -->
-  <div class="slider">
-    <div class="slides">
-
-      <!-- SLIDE 1 -->
-      <svg class="slide" viewBox="0 0 520 260">
-        <rect width="520" height="260" fill="#222"/>
-        <rect x="80" y="120" width="360" height="60" rx="10" fill="#777"/>
-        <circle cx="150" cy="190" r="18" fill="#000"/>
-        <circle cx="350" cy="190" r="18" fill="#000"/>
-        <text x="260" y="80" fill="#ffa726" font-size="28" text-anchor="middle">ELEKTROVOZ</text>
-      </svg>
-
-      <!-- SLIDE 2 -->
-      <svg class="slide" viewBox="0 0 520 260">
-        <rect width="520" height="260" fill="#1b1b1b"/>
-        <rect x="60" y="110" width="400" height="70" rx="12" fill="#999"/>
-        <circle cx="160" cy="195" r="20"/>
-        <circle cx="360" cy="195" r="20"/>
-        <text x="260" y="80" fill="#4fc3f7" font-size="26" text-anchor="middle">LOKOMOTIV DEPO</text>
-      </svg>
-
-      <!-- SLIDE 3 -->
-      <svg class="slide" viewBox="0 0 520 260">
-        <rect width="520" height="260" fill="#000"/>
-        <rect x="100" y="130" width="320" height="50" rx="8" fill="#555"/>
-        <circle cx="170" cy="190" r="16"/>
-        <circle cx="350" cy="190" r="16"/>
-        <text x="260" y="90" fill="#81c784" font-size="24" text-anchor="middle">ZAMONAVIY POYEZD</text>
-      </svg>
-
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">🚂</div>
+      <div class="txt">
+        <h1>SMART LOKO DEPO</h1>
+        <p>Qarshi Lokomotiv Deposi — Admin</p>
+      </div>
     </div>
-  </div>
-</section>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-content">
-    <h3>Admin kirish</h3>
-    <input id="loginInput" placeholder="Login">
-    <input id="passInput" type="password" placeholder="Parol">
-    <button onclick="login()">Kirish</button>
+    <div class="side-actions">
+      <button class="pill" id="btnLoginOpen">🔐 Login</button>
+      <button class="pill" id="btnSeed">✨ Demo ma’lumot</button>
+    </div>
+
+    <div class="menu" id="menu">
+      <div class="group-title">Asosiy</div>
+      <div class="nav-item active" data-page="dashboard">
+        <div class="ico">📊</div>
+        <div class="nav-text"><b>Dashboard</b><span>Umumiy ko‘rsatkich</span></div>
+      </div>
+      <div class="nav-item" data-page="inventory">
+        <div class="ico">📦</div>
+        <div class="nav-text"><b>Ombor</b><span>Kirim-chiqim, qoldiq</span></div>
+      </div>
+      <div class="nav-item" data-page="maintenance">
+        <div class="ico">🛠️</div>
+        <div class="nav-text"><b>Texnik xizmat</b><span>Ta’mir va servis</span></div>
+      </div>
+
+      <div class="group-title">Boshqaruv</div>
+      <div class="nav-item" data-page="reports">
+        <div class="ico">📈</div>
+        <div class="nav-text"><b>Hisobot</b><span>Statistika, eksport</span></div>
+      </div>
+      <div class="nav-item" data-page="staff">
+        <div class="ico">👷</div>
+        <div class="nav-text"><b>Xodimlar</b><span>Ro‘yxat, lavozim</span></div>
+      </div>
+      <div class="nav-item" data-page="settings">
+        <div class="ico">⚙️</div>
+        <div class="nav-text"><b>Sozlamalar</b><span>Tizim parametrlari</span></div>
+      </div>
+
+      <div class="group-title">Yordam</div>
+      <div class="nav-item" data-page="help">
+        <div class="ico">❓</div>
+        <div class="nav-text"><b>Qo‘llanma</b><span>Qanday ishlaydi?</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="userbox">
+        <div class="avatar">👤</div>
+        <div class="meta">
+          <b id="userName">Guest</b>
+          <small id="userRole">Kirish qilinmagan</small>
+        </div>
+      </div>
+      <button class="logout" id="btnLogout" title="Chiqish">⎋</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex; flex-direction:column; gap:2px">
+        <div style="font-weight:750; letter-spacing:.2px">Qarshi Lokomotiv Deposi</div>
+        <div style="color:var(--muted); font-size:12px" id="nowText">—</div>
+      </div>
+
+      <div class="search">
+        🔎 <input id="globalSearch" placeholder="Qidiruv: mahsulot, lokomotiv, ta’mir, xodim..." />
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btnExport">⬇️ Export</button>
+        <button class="btn primary" id="btnNew">➕ Yangi</button>
+        <button class="btn success" id="btnQuickOk">✅ Tez tasdiq</button>
+      </div>
+    </div>
+
+    <div class="content" id="content">
+      <!-- Pages injected here -->
+    </div>
+  </main>
+
+</div>
+
+<!-- MODAL: Create/Edit -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="mhd">
+      <b id="modalTitle">Yangi yozuv</b>
+      <button class="x" id="modalClose">✕</button>
+    </div>
+    <div class="mbd" id="modalBody"></div>
   </div>
 </div>
 
-<!-- ADMIN -->
-<div id="admin">
-  <h2>Admin Panel</h2>
-  <div class="box">🚆 Lokomotivlar</div>
-  <div class="box">👷 Xodimlar</div>
-  <div class="box">📊 Hisobotlar</div>
-  <button onclick="logout()">Chiqish</button>
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="top">
+      <h2>🔐 Tizimga kirish</h2>
+      <p>Demo uchun: <b>admin</b> / <b>12345</b> (keyin backend ulaymiz)</p>
+    </div>
+    <div class="body">
+      <div class="form">
+        <div class="field full">
+          <label>Login</label>
+          <input type="text" id="loginUser" placeholder="admin / boss / worker"/>
+        </div>
+        <div class="field full">
+          <label>Parol</label>
+          <input type="text" id="loginPass" placeholder="12345"/>
+        </div>
+      </div>
+
+      <div class="err" id="loginErr">Login yoki parol xato.</div>
+
+      <div style="display:flex; gap:10px; margin-top:14px">
+        <button class="btn primary" id="btnLogin">Kirish</button>
+        <button class="btn" id="btnLoginCancel">Bekor qilish</button>
+      </div>
+      <div class="hint">Eslatma: Hozircha ma’lumotlar brauzerda (localStorage) saqlanadi.</div>
+    </div>
+  </div>
 </div>
 
 <script>
-function openLogin(){
-  document.getElementById("loginModal").style.display="block";
+/* =========================
+   Utilities + State
+========================= */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const LS = {
+  get(k, def){ try{ return JSON.parse(localStorage.getItem(k)) ?? def }catch{ return def } },
+  set(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+};
+
+const state = {
+  page: "dashboard",
+  user: LS.get("sld_user", {name:"Guest", role:"Kirish qilinmagan", authed:false}),
+  inventory: LS.get("sld_inventory", []),
+  maintenance: LS.get("sld_maintenance", []),
+  staff: LS.get("sld_staff", []),
+};
+
+function toast(msg){
+  // super-light inline toast
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.position="fixed";
+  t.style.right="18px";
+  t.style.bottom="18px";
+  t.style.padding="12px 14px";
+  t.style.border="1px solid rgba(255,255,255,.12)";
+  t.style.borderRadius="16px";
+  t.style.background="rgba(15,26,48,.95)";
+  t.style.boxShadow="0 18px 60px rgba(0,0,0,.55)";
+  t.style.zIndex="120";
+  t.style.maxWidth="340px";
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .25s"; }, 1600);
+  setTimeout(()=>t.remove(), 1950);
 }
-function login(){
-  if(
-    document.getElementById("loginInput").value==="admin" &&
-    document.getElementById("passInput").value==="12345"
-  ){
-    localStorage.setItem("auth","1");
-    location.reload();
-  }else alert("Login yoki parol xato");
+
+function fmtDate(d){
+  const dt = new Date(d);
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const day = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
 }
-function logout(){
-  localStorage.clear();
+function nowLabel(){
+  const d = new Date();
+  const opt = {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit'};
+  return d.toLocaleString('uz-UZ', opt);
+}
+function saveAll(){
+  LS.set("sld_user", state.user);
+  LS.set("sld_inventory", state.inventory);
+  LS.set("sld_maintenance", state.maintenance);
+  LS.set("sld_staff", state.staff);
+}
+
+/* =========================
+   Demo seed data
+========================= */
+function seedDemo(){
+  if(state.inventory.length || state.maintenance.length || state.staff.length){
+    toast("Demo ma’lumotlar allaqachon bor.");
+    return;
+  }
+  state.inventory = [
+    {id: uid(), name:"Tormoz kolodkasi", category:"Ehtiyot qism", qty: 48, unit:"dona", location:"Ombor A", min: 10, supplier:"UZ Parts", date: fmtDate(new Date()), note:"TE-10 uchun"},
+    {id: uid(), name:"Moy (SAE 15W-40)", category:"Suyuqlik", qty: 220, unit:"litr", location:"Ombor B", min: 50, supplier:"OilServis", date: fmtDate(new Date()), note:"Zaxira"},
+    {id: uid(), name:"Kontaktor K-120", category:"Elektr", qty: 12, unit:"dona", location:"Stellaj 3", min: 4, supplier:"ElectroTrade", date: fmtDate(new Date()), note:"VL seriya"}
+  ];
+  state.maintenance = [
+    {id: uid(), loco:"2TE10M-1234", type:"Reja", status:"Jarayonda", start: fmtDate(new Date(Date.now()-86400000*3)), end:"", master:"Usta Shukur", note:"Dvigatel tekshiruv, moy almashtirish"},
+    {id: uid(), loco:"O'zbekiston-55", type:"Nosozlik", status:"Yakunlandi", start: fmtDate(new Date(Date.now()-86400000*10)), end: fmtDate(new Date(Date.now()-86400000*8)), master:"Usta Aziz", note:"Tormoz tizimi sozlandi"}
+  ];
+  state.staff = [
+    {id: uid(), name:"Aziz Qodirov", role:"Usta", phone:"+998 90 123 45 67", shift:"A", note:"Elektr bo‘limi"},
+    {id: uid(), name:"Shukur Rahimov", role:"Katta usta", phone:"+998 91 222 33 44", shift:"B", note:"Dizel dvigatel"},
+    {id: uid(), name:"Dilshod Karimov", role:"Omborchi", phone:"+998 93 555 66 77", shift:"A", note:"Qabul-chiqarish"}
+  ];
+  saveAll();
+  render();
+  toast("Demo ma’lumotlar yuklandi ✅");
+}
+
+function uid(){
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
+/* =========================
+   Rendering Pages
+========================= */
+const content = $("#content");
+
+function render(){
+  $("#nowText").textContent = nowLabel();
+  $("#userName").textContent = state.user.name;
+  $("#userRole").textContent = state.user.role;
+
+  // update active menu
+  $$(".nav-item").forEach(n => n.classList.toggle("active", n.dataset.page === state.page));
+
+  // new button label context
+  $("#btnNew").textContent = (state.page==="inventory") ? "➕ Mahsulot" :
+                            (state.page==="maintenance") ? "➕ Texnik xizmat" :
+                            (state.page==="staff") ? "➕ Xodim" : "➕ Yangi";
+
+  content.innerHTML = "";
+  if(state.page === "dashboard") content.appendChild(pageDashboard());
+  if(state.page === "inventory") content.appendChild(pageInventory());
+  if(state.page === "maintenance") content.appendChild(pageMaintenance());
+  if(state.page === "reports") content.appendChild(pageReports());
+  if(state.page === "staff") content.appendChild(pageStaff());
+  if(state.page === "settings") content.appendChild(pageSettings());
+  if(state.page === "help") content.appendChild(pageHelp());
+}
+
+function pageDashboard(){
+  const wrap = document.createElement("div");
+  wrap.className = "grid";
+
+  const totalItems = state.inventory.reduce((a,b)=>a + (Number(b.qty)||0), 0);
+  const lowStock = state.inventory.filter(x => Number(x.qty) <= Number(x.min||0)).length;
+  const maintActive = state.maintenance.filter(x => x.status !== "Yakunlandi").length;
+  const staffCount = state.staff.length;
+
+  wrap.appendChild(kpiCard("Ombordagi jami", totalItems, "Birliklar (qty yig‘indisi)", lowStock>0 ? "warn" : "ok", lowStock>0 ? `${lowStock} ta min-dan past` : "Zaxira normal"));
+  wrap.appendChild(kpiCard("Faol ta’mirlar", maintActive, "Jarayonda / rejalashtirilgan", maintActive>0 ? "ok" : "warn", maintActive>0 ? "Nazoratda" : "Faol ta’mir yo‘q"));
+  wrap.appendChild(kpiCard("Xodimlar", staffCount, "Ustalar va omborchi", "ok", "Ro‘yxat yangilanadi"));
+  wrap.appendChild(kpiCard("Tizim holati", "Online", "Frontend demo (local)", "ok", "Backend keyin ulanadi"));
+
+  // Recent activity cards
+  const c1 = card("So‘nggi ombor harakatlari", "Yaqinda qo‘shilgan / tahrirlangan mahsulotlar");
+  c1.style.gridColumn = "span 7";
+  c1.querySelector(".bd").appendChild(simpleList(
+    state.inventory.slice().reverse().slice(0,6).map(x => ({
+      title: x.name,
+      sub: `${x.category} • ${x.qty} ${x.unit} • ${x.location}`,
+      badge: (Number(x.qty)<=Number(x.min||0)) ? {txt:"Min-dan past", cls:"bad"} : {txt:"OK", cls:"ok"}
+    }))
+  ));
+  wrap.appendChild(c1);
+
+  const c2 = card("So‘nggi texnik xizmatlar", "Lokomotivlar bo‘yicha status");
+  c2.style.gridColumn = "span 5";
+  c2.querySelector(".bd").appendChild(simpleList(
+    state.maintenance.slice().reverse().slice(0,6).map(x => ({
+      title: x.loco,
+      sub: `${x.type} • ${x.master} • Boshlash: ${x.start}`,
+      badge: x.status==="Yakunlandi" ? {txt:"Yakunlandi", cls:"ok"} : (x.status==="Jarayonda" ? {txt:"Jarayonda", cls:"warn"} : {txt:x.status, cls:"warn"})
+    }))
+  ));
+  wrap.appendChild(c2);
+
+  const note = document.createElement("div");
+  note.className = "notice";
+  note.style.gridColumn = "span 12";
+  note.innerHTML = `🚀 Keyingi bosqich: backend ulab, loginni haqiqiy qilish, ma’lumotlarni server DB’da saqlash.
+  Hozircha barcha narsa brauzeringizda saqlanadi (localStorage).`;
+  wrap.appendChild(note);
+
+  return wrap;
+}
+
+function kpiCard(title, value, sub, badgeCls, badgeText){
+  const c = document.createElement("div");
+  c.className = "card kpi";
+  c.innerHTML = `
+    <div class="hd">
+      <div>
+        <h3>${title}</h3>
+        <p>${sub}</p>
+      </div>
+      <span class="badge ${badgeCls}">${badgeText}</span>
+    </div>
+    <div class="bd">
+      <div class="value">${value}</div>
+      <div class="sub">Oxirgi yangilanish: <span style="color:rgba(233,240,255,.85)">${nowLabel()}</span></div>
+    </div>
+  `;
+  return c;
+}
+
+function card(title, subtitle){
+  const c = document.createElement("div");
+  c.className = "card";
+  c.innerHTML = `
+    <div class="hd">
+      <div>
+        <h3>${title}</h3>
+        <p>${subtitle||""}</p>
+      </div>
+      <span class="badge">Smart Loko Depo</span>
+    </div>
+    <div class="bd"></div>
+  `;
+  return c;
+}
+
+function simpleList(items){
+  const box = document.createElement("div");
+  box.style.display="grid";
+  box.style.gap="10px";
+  if(!items.length){
+    const empty = document.createElement("div");
+    empty.className="hint";
+    empty.textContent="Hozircha ma’lumot yo‘q. Demo ma’lumot yuklash uchun: “Demo ma’lumot” tugmasini bosing.";
+    return empty;
+  }
+  items.forEach(it=>{
+    const row = document.createElement("div");
+    row.style.display="flex";
+    row.style.alignItems="center";
+    row.style.justifyContent="space-between";
+    row.style.gap="10px";
+    row.style.padding="12px 12px";
+    row.style.border="1px solid rgba(255,255,255,.08)";
+    row.style.borderRadius="18px";
+    row.style.background="rgba(255,255,255,.03)";
+    row.innerHTML = `
+      <div style="min-width:0">
+        <div style="font-weight:700">${escapeHtml(it.title)}</div>
+        <div style="color:var(--muted); font-size:12px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">
+          ${escapeHtml(it.sub||"")}
+        </div>
+      </div>
+      <span class="badge ${it.badge?.cls||""}">${escapeHtml(it.badge?.txt||"")}</span>
+    `;
+    box.appendChild(row);
+  });
+  return box;
+}
+
+function pageInventory(){
+  const wrap = document.createElement("div");
+  wrap.className = "grid";
+
+  const c = card("📦 Ombor / Inventar", "Mahsulotlar ro‘yxati, qidiruv, filtr, CRUD");
+  c.style.gridColumn="span 12";
+
+  const bd = c.querySelector(".bd");
+
+  const toolbar = document.createElement("div");
+  toolbar.className="toolbar";
+  toolbar.innerHTML = `
+    <div class="filters">
+      <input class="mini" id="invSearch" placeholder="Mahsulot nomi bo‘yicha qidirish..." />
+      <select class="mini" id="invCat">
+        <option value="">Kategoriya: Hammasi</option>
+        <option>Ehtiyot qism</option>
+        <option>Elektr</option>
+        <option>Suyuqlik</option>
+        <option>Asbob</option>
+        <option>Boshqa</option>
+      </select>
+      <select class="mini" id="invStock">
+        <option value="">Holat: Hammasi</option>
+        <option value="low">Min-dan past</option>
+        <option value="ok">Normal</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px">
+      <button class="btn" id="invClear">🧹 Tozalash</button>
+      <button class="btn primary" id="invAdd">➕ Mahsulot qo‘shish</button>
+    </div>
+  `;
+  bd.appendChild(toolbar);
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className="table-wrap";
+  tableWrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Mahsulot</th>
+          <th>Kategoriya</th>
+          <th>Qty</th>
+          <th>Min</th>
+          <th>Joy</th>
+          <th>Yetkazib beruvchi</th>
+          <th>So‘nggi sana</th>
+          <th>Holat</th>
+          <th>Amallar</th>
+        </tr>
+      </thead>
+      <tbody id="invBody"></tbody>
+    </table>
+  `;
+  bd.appendChild(tableWrap);
+
+  wrap.appendChild(c);
+
+  // render inventory rows
+  const invBody = tableWrap.querySelector("#invBody");
+  function draw(){
+    const q = (toolbar.querySelector("#invSearch").value||"").toLowerCase().trim();
+    const cat = toolbar.querySelector("#invCat").value;
+    const stock = toolbar.querySelector("#invStock").value;
+
+    let rows = state.inventory.slice();
+
+    if(q) rows = rows.filter(x => (x.name||"").toLowerCase().includes(q));
+    if(cat) rows = rows.filter(x => (x.category||"") === cat);
+    if(stock==="low") rows = rows.filter(x => Number(x.qty) <= Number(x.min||0));
+    if(stock==="ok") rows = rows.filter(x => Number(x.qty) > Number(x.min||0));
+
+    invBody.innerHTML = "";
+    if(!rows.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="9" style="color:var(--muted); padding:18px">Ma’lumot topilmadi. Demo yuklang yoki yangi mahsulot qo‘shing.</td>`;
+      invBody.appendChild(tr);
+      return;
+    }
+    rows.forEach(x=>{
+      const low = Number(x.qty) <= Number(x.min||0);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${escapeHtml(x.name)}</b><div style="color:var(--muted); font-size:12px; margin-top:3px">${escapeHtml(x.note||"")}</div></td>
+        <td>${escapeHtml(x.category||"")}</td>
+        <td><b>${escapeHtml(String(x.qty))}</b> <span style="color:var(--muted)">${escapeHtml(x.unit||"")}</span></td>
+        <td>${escapeHtml(String(x.min ?? ""))}</td>
+        <td>${escapeHtml(x.location||"")}</td>
+        <td>${escapeHtml(x.supplier||"")}</td>
+        <td>${escapeHtml(x.date||"")}</td>
+        <td>${low ? `<span class="badge bad">Min-dan past</span>` : `<span class="badge ok">Normal</span>`}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" title="Tahrirlash" data-act="edit" data-id="${x.id}">✏️</button>
+            <button class="icon-btn" title="O‘chirish" data-act="del" data-id="${x.id}">🗑️</button>
+          </div>
+        </td>
+      `;
+      invBody.appendChild(tr);
+    });
+  }
+
+  toolbar.querySelector("#invSearch").addEventListener("input", draw);
+  toolbar.querySelector("#invCat").addEventListener("change", draw);
+  toolbar.querySelector("#invStock").addEventListener("change", draw);
+
+  toolbar.querySelector("#invClear").addEventListener("click", ()=>{
+    toolbar.querySelector("#invSearch").value="";
+    toolbar.querySelector("#invCat").value="";
+    toolbar.querySelector("#invStock").value="";
+    draw();
+  });
+
+  toolbar.querySelector("#invAdd").addEventListener("click", ()=> openInventoryModal());
+  invBody.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+    const item = state.inventory.find(x=>x.id===id);
+    if(!item) return;
+
+    if(act==="edit") openInventoryModal(item);
+    if(act==="del"){
+      if(!state.user.authed){ toast("O‘chirish uchun login qiling."); openLogin(); return; }
+      state.inventory = state.inventory.filter(x=>x.id!==id);
+      saveAll();
+      draw();
+      toast("O‘chirildi ✅");
+      render(); // update dashboard KPIs
+    }
+  });
+
+  draw();
+  return wrap;
+}
+
+function openInventoryModal(item=null){
+  if(!state.user.authed){
+    toast("Avval login qiling.");
+    openLogin();
+    return;
+  }
+  openModal(item ? "📦 Mahsulotni tahrirlash" : "📦 Yangi mahsulot qo‘shish", ()=>{
+    const data = item ? {...item} : {id: uid(), date: fmtDate(new Date())};
+    const body = document.createElement("div");
+    body.innerHTML = `
+      <div class="form">
+        <div class="field">
+          <label>Mahsulot nomi</label>
+          <input type="text" id="f_name" value="${escapeAttr(data.name||"")}" placeholder="Masalan: Tormoz kolodkasi"/>
+        </div>
+        <div class="field">
+          <label>Kategoriya</label>
+          <select id="f_cat">
+            ${["Ehtiyot qism","Elektr","Suyuqlik","Asbob","Boshqa"].map(c=>`<option ${data.category===c?"selected":""}>${c}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>Miqdor (qty)</label>
+          <input type="number" id="f_qty" value="${escapeAttr(data.qty ?? 0)}"/>
+        </div>
+        <div class="field">
+          <label>O‘lchov birligi</label>
+          <select id="f_unit">
+            ${["dona","litr","kg","metr","komplekt"].map(u=>`<option ${data.unit===u?"selected":""}>${u}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>Minimal zaxira (min)</label>
+          <input type="number" id="f_min" value="${escapeAttr(data.min ?? 0)}"/>
+        </div>
+        <div class="field">
+          <label>Joy (ombor)</label>
+          <input type="text" id="f_loc" value="${escapeAttr(data.location||"")}" placeholder="Masalan: Ombor A / Stellaj 3"/>
+        </div>
+        <div class="field">
+          <label>Yetkazib beruvchi</label>
+          <input type="text" id="f_sup" value="${escapeAttr(data.supplier||"")}" placeholder="Masalan: UZ Parts"/>
+        </div>
+        <div class="field">
+          <label>So‘nggi sana</label>
+          <input type="date" id="f_date" value="${escapeAttr(data.date||fmtDate(new Date()))}"/>
+        </div>
+        <div class="field full">
+          <label>Izoh</label>
+          <textarea id="f_note" placeholder="Qisqa izoh...">${escapeHtml(data.note||"")}</textarea>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:12px">
+        <button class="btn success" id="saveBtn">💾 Saqlash</button>
+        <button class="btn" id="cancelBtn">Bekor</button>
+      </div>
+      <div class="hint">Eslatma: keyinchalik bu forma backend API bilan ulanadi.</div>
+    `;
+    setTimeout(()=>{
+      body.querySelector("#cancelBtn").onclick = closeModal;
+      body.querySelector("#saveBtn").onclick = ()=>{
+        const upd = {
+          id: data.id,
+          name: body.querySelector("#f_name").value.trim(),
+          category: body.querySelector("#f_cat").value,
+          qty: Number(body.querySelector("#f_qty").value || 0),
+          unit: body.querySelector("#f_unit").value,
+          min: Number(body.querySelector("#f_min").value || 0),
+          location: body.querySelector("#f_loc").value.trim(),
+          supplier: body.querySelector("#f_sup").value.trim(),
+          date: body.querySelector("#f_date").value,
+          note: body.querySelector("#f_note").value.trim(),
+        };
+        if(!upd.name){ toast("Mahsulot nomini kiriting."); return; }
+        const idx = state.inventory.findIndex(x=>x.id===upd.id);
+        if(idx>=0) state.inventory[idx]=upd;
+        else state.inventory.unshift(upd);
+        saveAll();
+        closeModal();
+        toast("Saqlanди ✅");
+        render();
+      };
+    }, 0);
+    return body;
+  });
+}
+
+function pageMaintenance(){
+  const wrap = document.createElement("div");
+  wrap.className = "grid";
+
+  const c = card("🛠️ Texnik xizmat / Ta’mir", "Lokomotivlar bo‘yicha servis yozuvlari (CRUD)");
+  c.style.gridColumn="span 12";
+  const bd = c.querySelector(".bd");
+
+  const toolbar = document.createElement("div");
+  toolbar.className="toolbar";
+  toolbar.innerHTML = `
+    <div class="filters">
+      <input class="mini" id="mSearch" placeholder="Lokomotiv raqami bo‘yicha qidirish..." />
+      <select class="mini" id="mStatus">
+        <option value="">Status: Hammasi</option>
+        <option>Rejalashtirilgan</option>
+        <option>Jarayonda</option>
+        <option>Yakunlandi</option>
+      </select>
+      <select class="mini" id="mType">
+        <option value="">Tur: Hammasi</option>
+        <option>Reja</option>
+        <option>Nosozlik</option>
+        <option>Modernizatsiya</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px">
+      <button class="btn" id="mClear">🧹 Tozalash</button>
+      <button class="btn primary" id="mAdd">➕ Texnik xizmat qo‘shish</button>
+    </div>
+  `;
+  bd.appendChild(toolbar);
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className="table-wrap";
+  tableWrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Lokomotiv</th>
+          <th>Tur</th>
+          <th>Status</th>
+          <th>Boshlash</th>
+          <th>Tugash</th>
+          <th>Mas’ul usta</th>
+          <th>Izoh</th>
+          <th>Amallar</th>
+        </tr>
+      </thead>
+      <tbody id="mBody"></tbody>
+    </table>
+  `;
+  bd.appendChild(tableWrap);
+
+  wrap.appendChild(c);
+
+  const mBody = tableWrap.querySelector("#mBody");
+  function draw(){
+    const q = (toolbar.querySelector("#mSearch").value||"").toLowerCase().trim();
+    const st = toolbar.querySelector("#mStatus").value;
+    const tp = toolbar.querySelector("#mType").value;
+
+    let rows = state.maintenance.slice();
+    if(q) rows = rows.filter(x => (x.loco||"").toLowerCase().includes(q));
+    if(st) rows = rows.filter(x => (x.status||"") === st);
+    if(tp) rows = rows.filter(x => (x.type||"") === tp);
+
+    mBody.innerHTML = "";
+    if(!rows.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="8" style="color:var(--muted); padding:18px">Ma’lumot topilmadi. Demo yuklang yoki yangi yozuv qo‘shing.</td>`;
+      mBody.appendChild(tr);
+      return;
+    }
+    rows.forEach(x=>{
+      const badge = x.status==="Yakunlandi" ? "ok" : (x.status==="Jarayonda" ? "warn" : "warn");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${escapeHtml(x.loco)}</b></td>
+        <td>${escapeHtml(x.type||"")}</td>
+        <td><span class="badge ${badge}">${escapeHtml(x.status||"")}</span></td>
+        <td>${escapeHtml(x.start||"")}</td>
+        <td>${escapeHtml(x.end||"")}</td>
+        <td>${escapeHtml(x.master||"")}</td>
+        <td style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(x.note||"")}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" title="Tahrirlash" data-act="edit" data-id="${x.id}">✏️</button>
+            <button class="icon-btn" title="O‘chirish" data-act="del" data-id="${x.id}">🗑️</button>
+          </div>
+        </td>
+      `;
+      mBody.appendChild(tr);
+    });
+  }
+
+  toolbar.querySelector("#mSearch").addEventListener("input", draw);
+  toolbar.querySelector("#mStatus").addEventListener("change", draw);
+  toolbar.querySelector("#mType").addEventListener("change", draw);
+
+  toolbar.querySelector("#mClear").addEventListener("click", ()=>{
+    toolbar.querySelector("#mSearch").value="";
+    toolbar.querySelector("#mStatus").value="";
+    toolbar.querySelector("#mType").value="";
+    draw();
+  });
+
+  toolbar.querySelector("#mAdd").addEventListener("click", ()=> openMaintenanceModal());
+  mBody.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+    const row = state.maintenance.find(x=>x.id===id);
+    if(!row) return;
+
+    if(act==="edit") openMaintenanceModal(row);
+    if(act==="del"){
+      if(!state.user.authed){ toast("O‘chirish uchun login qiling."); openLogin(); return; }
+      state.maintenance = state.maintenance.filter(x=>x.id!==id);
+      saveAll();
+      draw();
+      toast("O‘chirildi ✅");
+      render();
+    }
+  });
+
+  draw();
+  return wrap;
+}
+
+function openMaintenanceModal(item=null){
+  if(!state.user.authed){
+    toast("Avval login qiling.");
+    openLogin();
+    return;
+  }
+  openModal(item ? "🛠️ Yozuvni tahrirlash" : "🛠️ Yangi texnik xizmat", ()=>{
+    const data = item ? {...item} : {id: uid(), start: fmtDate(new Date()), end:"", status:"Rejalashtirilgan", type:"Reja"};
+    const body = document.createElement("div");
+    body.innerHTML = `
+      <div class="form">
+        <div class="field">
+          <label>Lokomotiv raqami</label>
+          <input type="text" id="m_loco" value="${escapeAttr(data.loco||"")}" placeholder="Masalan: 2TE10M-1234"/>
+        </div>
+        <div class="field">
+          <label>Tur</label>
+          <select id="m_type">
+            ${["Reja","Nosozlik","Modernizatsiya"].map(t=>`<option ${data.type===t?"selected":""}>${t}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="m_status">
+            ${["Rejalashtirilgan","Jarayonda","Yakunlandi"].map(s=>`<option ${data.status===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>Mas’ul usta</label>
+          <input type="text" id="m_master" value="${escapeAttr(data.master||"")}" placeholder="Masalan: Usta Aziz"/>
+        </div>
+        <div class="field">
+          <label>Boshlash sanasi</label>
+          <input type="date" id="m_start" value="${escapeAttr(data.start||fmtDate(new Date()))}"/>
+        </div>
+        <div class="field">
+          <label>Tugash sanasi</label>
+          <input type="date" id="m_end" value="${escapeAttr(data.end||"")}"/>
+        </div>
+        <div class="field full">
+          <label>Izoh</label>
+          <textarea id="m_note" placeholder="Nima ish bajarildi?">${escapeHtml(data.note||"")}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px">
+        <button class="btn success" id="saveBtn">💾 Saqlash</button>
+        <button class="btn" id="cancelBtn">Bekor</button>
+      </div>
+      <div class="hint">Keyin bu modulga foto/akt/hujjat biriktirish ham qo‘shamiz.</div>
+    `;
+    setTimeout(()=>{
+      body.querySelector("#cancelBtn").onclick = closeModal;
+      body.querySelector("#saveBtn").onclick = ()=>{
+        const upd = {
+          id: data.id,
+          loco: body.querySelector("#m_loco").value.trim(),
+          type: body.querySelector("#m_type").value,
+          status: body.querySelector("#m_status").value,
+          master: body.querySelector("#m_master").value.trim(),
+          start: body.querySelector("#m_start").value,
+          end: body.querySelector("#m_end").value,
+          note: body.querySelector("#m_note").value.trim(),
+        };
+        if(!upd.loco){ toast("Lokomotiv raqamini kiriting."); return; }
+        const idx = state.maintenance.findIndex(x=>x.id===upd.id);
+        if(idx>=0) state.maintenance[idx]=upd;
+        else state.maintenance.unshift(upd);
+        saveAll();
+        closeModal();
+        toast("Saqlanди ✅");
+        render();
+      };
+    }, 0);
+    return body;
+  });
+}
+
+function pageStaff(){
+  const wrap = document.createElement("div");
+  wrap.className="grid";
+
+  const c = card("👷 Xodimlar", "Ustalar, omborchi, bo‘limlar (CRUD)");
+  c.style.gridColumn="span 12";
+  const bd = c.querySelector(".bd");
+
+  const toolbar = document.createElement("div");
+  toolbar.className="toolbar";
+  toolbar.innerHTML = `
+    <div class="filters">
+      <input class="mini" id="sSearch" placeholder="Ism bo‘yicha qidirish..." />
+      <select class="mini" id="sRole">
+        <option value="">Lavozim: Hammasi</option>
+        <option>Usta</option>
+        <option>Katta usta</option>
+        <option>Omborchi</option>
+        <option>Muhandis</option>
+        <option>Boshliq</option>
+      </select>
+      <select class="mini" id="sShift">
+        <option value="">Smena: Hammasi</option>
+        <option>A</option><option>B</option><option>C</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px">
+      <button class="btn" id="sClear">🧹 Tozalash</button>
+      <button class="btn primary" id="sAdd">➕ Xodim qo‘shish</button>
+    </div>
+  `;
+  bd.appendChild(toolbar);
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className="table-wrap";
+  tableWrap.innerHTML = `
+    <table style="min-width:780px">
+      <thead>
+        <tr>
+          <th>Ism</th>
+          <th>Lavozim</th>
+          <th>Telefon</th>
+          <th>Smena</th>
+          <th>Izoh</th>
+          <th>Amallar</th>
+        </tr>
+      </thead>
+      <tbody id="sBody"></tbody>
+    </table>
+  `;
+  bd.appendChild(tableWrap);
+
+  wrap.appendChild(c);
+
+  const sBody = tableWrap.querySelector("#sBody");
+  function draw(){
+    const q = (toolbar.querySelector("#sSearch").value||"").toLowerCase().trim();
+    const r = toolbar.querySelector("#sRole").value;
+    const sh = toolbar.querySelector("#sShift").value;
+
+    let rows = state.staff.slice();
+    if(q) rows = rows.filter(x => (x.name||"").toLowerCase().includes(q));
+    if(r) rows = rows.filter(x => x.role===r);
+    if(sh) rows = rows.filter(x => x.shift===sh);
+
+    sBody.innerHTML = "";
+    if(!rows.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="6" style="color:var(--muted); padding:18px">Ma’lumot topilmadi. Demo yuklang yoki yangi xodim qo‘shing.</td>`;
+      sBody.appendChild(tr);
+      return;
+    }
+    rows.forEach(x=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${escapeHtml(x.name||"")}</b></td>
+        <td>${escapeHtml(x.role||"")}</td>
+        <td>${escapeHtml(x.phone||"")}</td>
+        <td><span class="badge">${escapeHtml(x.shift||"")}</span></td>
+        <td style="max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(x.note||"")}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" title="Tahrirlash" data-act="edit" data-id="${x.id}">✏️</button>
+            <button class="icon-btn" title="O‘chirish" data-act="del" data-id="${x.id}">🗑️</button>
+          </div>
+        </td>
+      `;
+      sBody.appendChild(tr);
+    });
+  }
+
+  toolbar.querySelector("#sSearch").addEventListener("input", draw);
+  toolbar.querySelector("#sRole").addEventListener("change", draw);
+  toolbar.querySelector("#sShift").addEventListener("change", draw);
+  toolbar.querySelector("#sClear").addEventListener("click", ()=>{
+    toolbar.querySelector("#sSearch").value="";
+    toolbar.querySelector("#sRole").value="";
+    toolbar.querySelector("#sShift").value="";
+    draw();
+  });
+
+  toolbar.querySelector("#sAdd").addEventListener("click", ()=> openStaffModal());
+  sBody.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+    const row = state.staff.find(x=>x.id===id);
+    if(!row) return;
+
+    if(act==="edit") openStaffModal(row);
+    if(act==="del"){
+      if(!state.user.authed){ toast("O‘chirish uchun login qiling."); openLogin(); return; }
+      state.staff = state.staff.filter(x=>x.id!==id);
+      saveAll();
+      draw();
+      toast("O‘chirildi ✅");
+      render();
+    }
+  });
+
+  draw();
+  return wrap;
+}
+
+function openStaffModal(item=null){
+  if(!state.user.authed){
+    toast("Avval login qiling.");
+    openLogin();
+    return;
+  }
+  openModal(item ? "👷 Xodimni tahrirlash" : "👷 Yangi xodim", ()=>{
+    const data = item ? {...item} : {id: uid(), shift:"A", role:"Usta"};
+    const body = document.createElement("div");
+    body.innerHTML = `
+      <div class="form">
+        <div class="field">
+          <label>Ism</label>
+          <input type="text" id="s_name" value="${escapeAttr(data.name||"")}" placeholder="Masalan: Aziz Qodirov"/>
+        </div>
+        <div class="field">
+          <label>Lavozim</label>
+          <select id="s_role">
+            ${["Usta","Katta usta","Omborchi","Muhandis","Boshliq"].map(r=>`<option ${data.role===r?"selected":""}>${r}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label>Telefon</label>
+          <input type="text" id="s_phone" value="${escapeAttr(data.phone||"")}" placeholder="+998 90 000 00 00"/>
+        </div>
+        <div class="field">
+          <label>Smena</label>
+          <select id="s_shift">
+            ${["A","B","C"].map(sh=>`<option ${data.shift===sh?"selected":""}>${sh}</option>`).join("")}
+          </select>
+        </div>
+        <div class="field full">
+          <label>Izoh</label>
+          <textarea id="s_note" placeholder="Bo‘lim, vazifa...">${escapeHtml(data.note||"")}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px">
+        <button class="btn success" id="saveBtn">💾 Saqlash</button>
+        <button class="btn" id="cancelBtn">Bekor</button>
+      </div>
+    `;
+    setTimeout(()=>{
+      body.querySelector("#cancelBtn").onclick = closeModal;
+      body.querySelector("#saveBtn").onclick = ()=>{
+        const upd = {
+          id: data.id,
+          name: body.querySelector("#s_name").value.trim(),
+          role: body.querySelector("#s_role").value,
+          phone: body.querySelector("#s_phone").value.trim(),
+          shift: body.querySelector("#s_shift").value,
+          note: body.querySelector("#s_note").value.trim(),
+        };
+        if(!upd.name){ toast("Ism kiriting."); return; }
+        const idx = state.staff.findIndex(x=>x.id===upd.id);
+        if(idx>=0) state.staff[idx]=upd;
+        else state.staff.unshift(upd);
+        saveAll();
+        closeModal();
+        toast("Saqlanди ✅");
+        render();
+      };
+    }, 0);
+    return body;
+  });
+}
+
+function pageReports(){
+  const wrap = document.createElement("div");
+  wrap.className="grid";
+
+  const c1 = card("📈 Hisobotlar", "Ombor va texnik xizmat bo‘yicha umumiy statistikalar");
+  c1.style.gridColumn="span 12";
+  const bd = c1.querySelector(".bd");
+
+  const totalItems = state.inventory.reduce((a,b)=>a + (Number(b.qty)||0), 0);
+  const totalKinds = state.inventory.length;
+  const lowStock = state.inventory.filter(x => Number(x.qty) <= Number(x.min||0)).length;
+
+  const totalMaint = state.maintenance.length;
+  const doneMaint = state.maintenance.filter(x => x.status==="Yakunlandi").length;
+
+  bd.innerHTML = `
+    <div class="grid">
+      <div class="card" style="grid-column: span 6">
+        <div class="hd">
+          <div><h3>Ombor statistikasi</h3><p>Qoldiq va minimal zaxira nazorati</p></div>
+          <span class="badge">Inventory</span>
+        </div>
+        <div class="bd">
+          <div style="display:grid; gap:8px">
+            <div>🔹 Mahsulot turlari: <b>${totalKinds}</b></div>
+            <div>🔹 Jami qty: <b>${totalItems}</b></div>
+            <div>🔸 Min-dan past: <b style="color:${lowStock? 'var(--warn)':'var(--accent2)'}">${lowStock}</b></div>
+          </div>
+          <div class="hint" style="margin-top:10px">Keyin: PDF/Excel eksport, diagrammalar qo‘shiladi.</div>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column: span 6">
+        <div class="hd">
+          <div><h3>Texnik xizmat statistikasi</h3><p>Ta’mirlar statusi</p></div>
+          <span class="badge">Maintenance</span>
+        </div>
+        <div class="bd">
+          <div style="display:grid; gap:8px">
+            <div>🔹 Jami yozuvlar: <b>${totalMaint}</b></div>
+            <div>✅ Yakunlangan: <b>${doneMaint}</b></div>
+            <div>⏳ Jarayonda/Reja: <b>${totalMaint - doneMaint}</b></div>
+          </div>
+          <div class="hint" style="margin-top:10px">Keyin: lokomotiv bo‘yicha filtr, ta’mir xarajatlari qo‘shiladi.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice" style="margin-top:14px">
+      ⬇️ “Export” tugmasi hozir JSON/CSV eksport qiladi. Keyin backendga ulab Excel/PDF qilamiz.
+    </div>
+  `;
+  wrap.appendChild(c1);
+  return wrap;
+}
+
+function pageSettings(){
+  const wrap = document.createElement("div");
+  wrap.className="grid";
+
+  const c = card("⚙️ Sozlamalar", "Tizim parametrlari (demo)");
+  c.style.gridColumn="span 12";
+  c.querySelector(".bd").innerHTML = `
+    <div class="form">
+      <div class="field">
+        <label>Depo nomi</label>
+        <input type="text" value="Qarshi Lokomotiv Deposi" />
+      </div>
+      <div class="field">
+        <label>Region</label>
+        <input type="text" value="Qashqadaryo" />
+      </div>
+      <div class="field">
+        <label>DB rejimi</label>
+        <select>
+          <option selected>LocalStorage (demo)</option>
+          <option>Server DB (keyin)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Til</label>
+        <select>
+          <option selected>O‘zbek (lotin)</option>
+          <option>Ўзбек (кирилл)</option>
+          <option>Русский</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>Eslatma</label>
+        <textarea>Bu bo‘lim keyin backend bilan ishlaydi. Hozircha dizayn va layout tayyor.</textarea>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:12px">
+      <button class="btn success" onclick="toast('Saqlash (demo) ✅')">💾 Saqlash</button>
+      <button class="btn danger" onclick="resetAll()">🧨 Barchasini tozalash</button>
+    </div>
+    <div class="hint">“Barchasini tozalash” localStorage’dagi demo ma’lumotlarni ham o‘chiradi.</div>
+  `;
+  wrap.appendChild(c);
+  return wrap;
+}
+
+function pageHelp(){
+  const wrap = document.createElement("div");
+  wrap.className="grid";
+
+  const c = card("❓ Qo‘llanma", "Qanday ishlatish bo‘yicha qisqa yo‘riqnoma");
+  c.style.gridColumn="span 12";
+  c.querySelector(".bd").innerHTML = `
+    <div class="notice">
+      1) “Demo ma’lumot” tugmasini bosing (tayyor data keladi). <br/>
+      2) “Login” qilib CRUD (qo‘shish/tahrirlash/o‘chirish) ishlaydi. <br/>
+      3) Ombor / Texnik xizmat / Xodimlar — hammasi tayyor UI. <br/>
+      4) Keyingi bosqich: backend ulab, ma’lumotlarni server bazaga o‘tkazamiz.
+    </div>
+
+    <div style="margin-top:14px" class="grid">
+      <div class="card" style="grid-column: span 6">
+        <div class="hd"><div><h3>Login</h3><p>Demo: admin / 12345</p></div><span class="badge">Auth</span></div>
+        <div class="bd">
+          <div class="hint">Login bo‘lmasa, tahrirlash/o‘chirish cheklangan.</div>
+        </div>
+      </div>
+      <div class="card" style="grid-column: span 6">
+        <div class="hd"><div><h3>Export</h3><p>CSV/JSON chiqarish</p></div><span class="badge">Data</span></div>
+        <div class="bd">
+          <div class="hint">Hozir brauzerda export qiladi. Keyin Excel/PDF ham qo‘shamiz.</div>
+        </div>
+      </div>
+    </div>
+  `;
+  wrap.appendChild(c);
+  return wrap;
+}
+
+/* =========================
+   Modal helpers
+========================= */
+const modalBackdrop = $("#modalBackdrop");
+const modalBody = $("#modalBody");
+const modalTitle = $("#modalTitle");
+$("#modalClose").onclick = closeModal;
+modalBackdrop.addEventListener("click", (e)=>{ if(e.target===modalBackdrop) closeModal(); });
+
+function openModal(title, buildBodyFn){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = "";
+  const node = buildBodyFn();
+  if(node) modalBody.appendChild(node);
+  modalBackdrop.style.display = "flex";
+}
+function closeModal(){
+  modalBackdrop.style.display = "none";
+  modalBody.innerHTML = "";
+}
+
+/* =========================
+   Login
+========================= */
+const loginScreen = $("#loginScreen");
+function openLogin(){ loginScreen.style.display="flex"; $("#loginErr").style.display="none"; }
+function closeLogin(){ loginScreen.style.display="none"; $("#loginErr").style.display="none"; }
+
+$("#btnLoginOpen").onclick = openLogin;
+$("#btnLoginCancel").onclick = closeLogin;
+
+$("#btnLogin").onclick = ()=>{
+  const u = $("#loginUser").value.trim();
+  const p = $("#loginPass").value.trim();
+  const ok = (p === "12345") && ["admin","boss","worker"].includes(u);
+  if(!ok){
+    $("#loginErr").style.display="block";
+    return;
+  }
+  state.user.authed = true;
+  state.user.name = u === "admin" ? "Admin" : (u==="boss" ? "Boshliq" : "Xodim");
+  state.user.role = u === "admin" ? "Administrator" : (u==="boss" ? "Boshliq (read-only keyin)" : "Xodim");
+  saveAll();
+  closeLogin();
+  toast("Kirish muvaffaqiyatli ✅");
+  render();
+};
+
+$("#btnLogout").onclick = ()=>{
+  state.user = {name:"Guest", role:"Kirish qilinmagan", authed:false};
+  saveAll();
+  toast("Chiqildi");
+  render();
+};
+
+/* =========================
+   Global actions
+========================= */
+$("#btnSeed").onclick = seedDemo;
+
+$("#btnNew").onclick = ()=>{
+  if(state.page==="inventory") openInventoryModal();
+  else if(state.page==="maintenance") openMaintenanceModal();
+  else if(state.page==="staff") openStaffModal();
+  else toast("Bu bo‘limda “Yangi” ishlamaydi.");
+};
+
+$("#btnQuickOk").onclick = ()=>{
+  toast("Tez tasdiq ✅ (demo)");
+};
+
+$("#btnExport").onclick = ()=>{
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    inventory: state.inventory,
+    maintenance: state.maintenance,
+    staff: state.staff
+  };
+  const json = JSON.stringify(payload, null, 2);
+  download("smart-loko-depo-export.json", json, "application/json");
+};
+
+function download(filename, text, mime="text/plain"){
+  const blob = new Blob([text], {type:mime});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+function resetAll(){
+  if(!confirm("Haqiqatan ham hammasini (localStorage) tozalaysizmi?")) return;
+  localStorage.removeItem("sld_inventory");
+  localStorage.removeItem("sld_maintenance");
+  localStorage.removeItem("sld_staff");
+  localStorage.removeItem("sld_user");
   location.reload();
 }
-if(localStorage.getItem("auth")){
-  document.getElementById("site").style.display="none";
-  document.getElementById("admin").style.display="block";
-}
-</script>
 
+/* =========================
+   Navigation
+========================= */
+$$(".nav-item").forEach(n=>{
+  n.addEventListener("click", ()=>{
+    state.page = n.dataset.page;
+    render();
+  });
+});
+
+// global search: jump to first match
+$("#globalSearch").addEventListener("keydown", (e)=>{
+  if(e.key !== "Enter") return;
+  const q = ($("#globalSearch").value||"").toLowerCase().trim();
+  if(!q){ toast("Qidiruv so‘zi yozing."); return; }
+
+  const inv = state.inventory.find(x => (x.name||"").toLowerCase().includes(q) || (x.note||"").toLowerCase().includes(q));
+  const mt = state.maintenance.find(x => (x.loco||"").toLowerCase().includes(q) || (x.note||"").toLowerCase().includes(q));
+  const st = state.staff.find(x => (x.name||"").toLowerCase().includes(q) || (x.note||"").toLowerCase().includes(q));
+
+  if(inv){ state.page="inventory"; render(); toast(`Topildi: ${inv.name}`); return; }
+  if(mt){ state.page="maintenance"; render(); toast(`Topildi: ${mt.loco}`); return; }
+  if(st){ state.page="staff"; render(); toast(`Topildi: ${st.name}`); return; }
+
+  toast("Hech narsa topilmadi.");
+});
+
+/* =========================
+   Safety helpers
+========================= */
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[s]));
+}
+function escapeAttr(str){
+  return escapeHtml(str).replace(/"/g, "&quot;");
+}
+
+/* init */
+render();
+setInterval(()=>$("#nowText").textContent = nowLabel(), 10000);
+</script>
 </body>
 </html>
